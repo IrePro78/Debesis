@@ -1,21 +1,23 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 import uuid
 
 
+#Mailbox
 class Mailbox(models.Model):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False)
-    host = models.CharField(blank=True)
-    port = models.IntegerField(default='465', blank=True)
-    login = models.CharField(blank=True)
-    password = models.CharField(blank=True)
-    email_from = models.CharField(default=True, blank=True)
-    use_ssl = models.BooleanField(default=True, blank=True)
-    is_active = models.BooleanField()
-    date = models.DateTimeField
-    last_update = models.DateTimeField
+    host = models.CharField()
+    port = models.IntegerField(default='465')
+    login = models.CharField()
+    password = models.CharField()
+    email_from = models.CharField()
+    use_ssl = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False, null=True, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+    last_update = models.DateTimeField(auto_now_add=True)
     sent = models.IntegerField()
 
     @property
@@ -23,16 +25,30 @@ class Mailbox(models.Model):
         return self.sent
 
 
-class Mail(models.Model):
+#Template
+class Template(models.Model):
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False)
-    mailbox = models.ForeignKey(Mailbox, related_name='emails', on_delete=models.CASCADE
-    template = models.ForeignKey(Template, blank=True)
-    to = models.EmailField
-    cc =
-    bcc =
-    reply_to =
-    sent_date =
-    date =
+    subject = models.CharField()
+    text = models.TextField()
+    attachment = models.FileField(null=True, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+    last_update = models.DateTimeField(auto_now_add=True)
+
+
+#Email
+class Email(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False)
+    mailbox = models.ForeignKey(Mailbox, related_name='emails', on_delete=models.CASCADE)
+    template = models.ForeignKey(Template, related_name='templates', on_delete=models.CASCADE)
+    to = ArrayField(models.CharField())
+    cc = ArrayField(models.CharField(null=True, blank=True))
+    bcc = ArrayField(models.CharField(null=True, blank=True))
+    reply_to = models.EmailField(default=None, null=True, blank=True)
+    sent_date = models.DateTimeField(default=None)
+    date = models.DateTimeField(auto_now_add=True)

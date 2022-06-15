@@ -3,9 +3,8 @@ from .models import Email, Template, Mailbox
 
 
 class MailboxSerializer(serializers.ModelSerializer):
-    sent_data = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    data = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    sent = ''
+    date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    last_update = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
     class Meta:
         model = Mailbox
@@ -25,12 +24,16 @@ class MailboxSerializer(serializers.ModelSerializer):
 
 
 class TemplateSerializer(serializers.ModelSerializer):
+    date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    last_update = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
 
     class Meta:
         model = Template
         fields = (
             "id",
             "subject",
+            "text",
             "attachment",
             "date",
             "last_update",
@@ -38,10 +41,10 @@ class TemplateSerializer(serializers.ModelSerializer):
 
 
 class EmailSerializer(serializers.ModelSerializer):
-    mailbox = MailboxSerializer(serializers.ModelSerializer)
+    # mailbox = MailboxSerializer(serializers.ModelSerializer)
     template = TemplateSerializer(serializers.ModelSerializer)
-    sent_data = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    data = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    sent_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
     class Meta:
         model = Email
@@ -53,6 +56,6 @@ class EmailSerializer(serializers.ModelSerializer):
             "cc",
             "bcc",
             "reply_to",
-            "sent_data",
-            "data",
+            "sent_date",
+            "date",
         )

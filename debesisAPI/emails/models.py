@@ -16,10 +16,8 @@ class Mailbox(models.Model):
     email_from = models.CharField(max_length=100)
     use_ssl = models.BooleanField(default=True)
     is_active = models.BooleanField(default=False, null=True, blank=True)
-    date = models.DateTimeField(auto_now_add=True)
-    last_update = models.DateTimeField(auto_now_add=True)
-
-    # sent = models.IntegerField()
+    date = models.DateTimeField(auto_now_add=True, blank=True)
+    last_update = models.DateTimeField(auto_now_add=True, blank=True)
 
     class Meta:
         ordering = ('host',)
@@ -28,7 +26,7 @@ class Mailbox(models.Model):
         return self.host
 
     @property
-    def sent_emails(self):
+    def sent(self):
         return self.emails.count()
 
 
@@ -69,5 +67,5 @@ class Email(models.Model):
     class Meta:
         ordering = ('mailbox',)
 
-    def __str__(self):
-        return self.mailbox
+    # def __list__(self):
+    #     return self.to

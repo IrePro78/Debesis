@@ -16,8 +16,8 @@ class Mailbox(models.Model):
     email_from = models.CharField(max_length=100)
     use_ssl = models.BooleanField(default=True)
     is_active = models.BooleanField(default=False, null=True, blank=True)
-    date = models.DateTimeField(auto_now_add=True, blank=True)
-    last_update = models.DateTimeField(auto_now_add=True, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+    last_update = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ('host',)
@@ -40,7 +40,7 @@ class Template(models.Model):
     text = models.TextField()
     attachment = models.FileField(null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
-    last_update = models.DateTimeField(auto_now_add=True)
+    last_update = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ('subject',)
@@ -58,14 +58,11 @@ class Email(models.Model):
     mailbox = models.ForeignKey(Mailbox, related_name='emails', on_delete=models.CASCADE)
     template = models.ForeignKey(Template, related_name='templates', on_delete=models.CASCADE)
     to = ArrayField(models.CharField(max_length=100))
-    cc = ArrayField(models.CharField(max_length=100, null=True, blank=True))
-    bcc = ArrayField(models.CharField(max_length=100, null=True, blank=True))
+    cc = ArrayField(models.CharField(max_length=100, blank=True, null=True))
+    bcc = ArrayField(models.CharField(max_length=100, blank=True, null=True))
     reply_to = models.EmailField(default=None, null=True, blank=True)
-    sent_date = models.DateTimeField(default=None)
+    sent_date = models.DateTimeField(default=None, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ('mailbox',)
-
-    # def __list__(self):
-    #     return self.to
+        ordering = ('date', 'sent_date')

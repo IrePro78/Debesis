@@ -37,29 +37,28 @@ class EmailsViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def send_message(self, email_id):
+        email = self.queryset.get(id=email_id)
 
-        email = self.queryset.values().filter(id=email_id)
-        print(email)
         email_msg = {
             'subject': email.template.subject,
             'body': email.template.text,
             'from_email': email.mailbox.email_from,
-            'to_email': email.to,
+            'to': email.to,
             'cc': email.cc,
             'bcc': email.bcc,
             'reply_to': email.reply_to,
-            'attachments': email.template.attachment,
+            # 'attachments': email.template.attachment,
         }
-
-        print(email_msg)
+        # print(*tuple(email_msg.values()))
         email_conn = {
             'host': email.mailbox.host,
             'port': email.mailbox.port,
             'login': email.mailbox.login,
             'password': email.mailbox.password,
-            # tls : email.mailbox.use_ssl,
-            'ssl': email.mailbox.use_ssl,
+            'tls': email.mailbox.use_ssl,
+            # 'ssl': email.mailbox.use_ssl
         }
+
 
         return send_mail_task.delay(email_msg, email_conn)
 

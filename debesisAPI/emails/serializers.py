@@ -40,8 +40,8 @@ class TemplateSerializer(serializers.ModelSerializer):
 
 
 class EmailSerializer(serializers.ModelSerializer):
-    template = TemplateSerializer(Template)
-    mailbox = MailboxSerializer()
+    # template = TemplateSerializer
+    # mailbox = MailboxSerializer
     sent_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", default=None, read_only=True)
     date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     cc = serializers.CharField(required=False, default=None)

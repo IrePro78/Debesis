@@ -55,7 +55,7 @@ class Email(models.Model):
         primary_key=True,
         default=uuid.uuid4,
         editable=False)
-    mailbox = models.ForeignKey(Mailbox, related_name='emails', on_delete=models.CASCADE)
+    mailbox = models.ForeignKey(Mailbox, related_name='mailboxes', on_delete=models.CASCADE)
     template = models.ForeignKey(Template, related_name='templates', on_delete=models.CASCADE)
     to = ArrayField(models.CharField(max_length=100))
     cc = ArrayField(models.CharField(max_length=100, blank=True, null=True))

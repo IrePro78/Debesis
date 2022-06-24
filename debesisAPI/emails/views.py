@@ -8,7 +8,7 @@ from .serializers import MailboxSerializer, EmailSerializer, TemplateSerializer
 
 class MailboxViewSet(viewsets.ModelViewSet):
     serializer_class = MailboxSerializer
-    queryset = Mailbox.objects.all().values()
+    queryset = Mailbox.objects.all()
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
 
@@ -49,16 +49,14 @@ class EmailsViewSet(viewsets.ModelViewSet):
             'reply_to': email.reply_to,
             # 'attachments': email.template.attachment,
         }
-        # print(*tuple(email_msg.values()))
         email_conn = {
             'host': email.mailbox.host,
             'port': email.mailbox.port,
-            'login': email.mailbox.login,
+            'username': email.mailbox.login,
             'password': email.mailbox.password,
             'tls': email.mailbox.use_ssl,
-            # 'ssl': email.mailbox.use_ssl
         }
-
+        print(email_conn)
 
         return send_mail_task.delay(email_msg, email_conn)
 

@@ -38,12 +38,15 @@ class Template(models.Model):
         editable=False)
     subject = models.CharField(max_length=100)
     text = models.TextField()
-    attachment = models.FileField(null=True, blank=True)
+    attachment = models.FileField(upload_to='attachments', null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
     last_update = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ('subject',)
+
+    def get_absolute_url(self):
+        return f'/{self.attachment.url}'
 
     def __str__(self):
         return self.subject

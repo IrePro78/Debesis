@@ -79,16 +79,6 @@ DATABASES = {
 }
 
 
-# Send_email#
-# EMAIL_BACKEND = env('EMAIL_BACKEND')
-# EMAIL_HOST = env('EMAIL_HOST')
-# EMAIL_USE_TLS = env('EMAIL_USE_TLS')
-# EMAIL_PORT = env('EMAIL_PORT')
-# EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-
-
-
 # Celery Configuration Options
 CELERY_BROKER_URL = "redis://redis:6379"
 CELERY_RESULT_BACKEND = "redis://redis:6379"
@@ -125,10 +115,15 @@ USE_I18N = True
 USE_TZ = True
 
 
+MEDIA_ROOT = BASE_DIR / 'attachments/'
+MEDIA_URL = '/attachments/'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

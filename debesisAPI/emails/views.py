@@ -1,5 +1,6 @@
 from django_filters import rest_framework as filters
 from rest_framework import viewsets, status
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from .models import Mailbox, Email, Template
 from .tasks import send_mail_task
@@ -14,8 +15,15 @@ class MailboxViewSet(viewsets.ModelViewSet):
 
 class TemplateViewSet(viewsets.ModelViewSet):
     serializer_class = TemplateSerializer
+    parser_classes = [MultiPartParser]
     queryset = Template.objects.all()
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class EmailFilter(filters.FilterSet):
@@ -38,27 +46,9 @@ class EmailsViewSet(viewsets.ModelViewSet):
 
     def send_message(self, email_id):
         email = self.queryset.get(id=email_id)
-
-        email_msg = {
-            'subject': email.template.subject,
-            'body': email.template.text,
-            'from_email': email.mailbox.email_from,
-            'to': email.to,
-            'cc': email.cc,
-            'bcc': email.bcc,
-            'reply_to': email.reply_to,
-            # 'attachments': email.template.attachment,
-        }
-        email_conn = {
-            'host': email.mailbox.host,
-            'port': email.mailbox.port,
-            'username': email.mailbox.login,
-            'password': email.mailbox.password,
-            'tls': email.mailbox.use_ssl,
-        }
-        print(email_conn)
-
-        return send_mail_task.delay(email_msg, email_conn)
+        if email.mailbox.is_active:
+            return send_mail_task.delay(email_id)
+        return print('Mailbox is inactive!')
 
     # filter_backends = [filters.DjangoFilterBackend]
     # filterset_fields = ('date', 'sent_date')

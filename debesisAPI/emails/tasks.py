@@ -1,27 +1,34 @@
 from celery import shared_task
 from django.core.mail import EmailMessage, get_connection
 
+from .models import Email
+
 
 @shared_task
-def send_mail_task(email_msg, email_conn):
-
-    print(email_conn)
-
-
+def send_mail_task(email_id):
+    email = Email.objects.get(id=email_id)
 
     connection = get_connection(
-        host=email_conn['host'],
-        port=email_conn['port'],
-        username=email_conn['username'],
-        password=email_conn['password'],
-        tls=email_conn['tls'],
+        host=email.mailbox.host,
+        port=email.mailbox.port,
+        username=email.mailbox.login,
+        password=email.mailbox.password,
+        use_tls=email.mailbox.use_ssl
     )
 
-    connection.open()
+    email_msg = {
+        'subject': email.template.subject,
+        'body': email.template.text,
+        'from_email': email.mailbox.email_from,
+        'to': email.to,
+        'bcc': email.bcc,
+        'connection': connection,
+        'attachments': email.template.attachment,
+        'headers': None,
+        'cc': email.cc,
+        'reply_to': email.reply_to,
+    }
 
-    email_msg = EmailMessage(*tuple(email_msg.values()))
-
-    connection.send_messages([email_msg])
-    connection.close()
-
-    return True
+    message = EmailMessage(*tuple(email_msg.values()))
+    message.attach_file('./attachments/test.pdf')
+    message.send(fail_silently=False)

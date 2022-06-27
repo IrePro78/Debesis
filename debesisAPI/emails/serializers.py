@@ -24,6 +24,7 @@ class MailboxSerializer(serializers.ModelSerializer):
 
 
 class TemplateSerializer(serializers.ModelSerializer):
+    attachment = serializers.FileField()
     date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     last_update = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 
@@ -40,8 +41,6 @@ class TemplateSerializer(serializers.ModelSerializer):
 
 
 class EmailSerializer(serializers.ModelSerializer):
-    # template = TemplateSerializer
-    # mailbox = MailboxSerializer
     sent_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", default=None, read_only=True)
     date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     cc = serializers.CharField(required=False, default=None)

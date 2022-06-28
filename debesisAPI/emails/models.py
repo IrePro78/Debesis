@@ -27,7 +27,7 @@ class Mailbox(models.Model):
 
     @property
     def sent(self):
-        return self.emails.count()
+        return self.mailboxes.count()
 
 
 # Template

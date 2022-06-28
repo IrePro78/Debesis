@@ -3,6 +3,7 @@ from .models import Email, Template, Mailbox
 
 
 class MailboxSerializer(serializers.ModelSerializer):
+    # sent =
     date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     last_update = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 

@@ -9,17 +9,3 @@ router.register('template', TemplateViewSet, basename='template')
 router.register('email', EmailsViewSet, basename='email')
 
 urlpatterns = router.urls
-
-
-
-
-# urlpatterns = [
-#     path('', include(router.urls)),
-#     path('mailbox/', include(router.urls)),
-#     path('mailbox/:id/', include(router.urls)),
-#     path('template/', include(router.urls)),
-#     path('template/:id/', include(router.urls)),
-#     path('template/:id/', include(router.urls)),
-#
-# ]
-

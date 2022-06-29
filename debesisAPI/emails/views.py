@@ -4,8 +4,9 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import Mailbox, Email, Template
-from .tasks import send_mail_task
+from datetime import datetime
 from .serializers import MailboxSerializer, EmailSerializer, TemplateSerializer
+from .tasks import send_mail_task
 
 
 class MailboxViewSet(viewsets.ModelViewSet):
@@ -47,18 +48,10 @@ class EmailsViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def send_message(self, request, pk=None):
         email = self.get_object()
-        # serializer = EmailSerializer(data=request.data)
-        # serializer.is_valid(raise_exception=False)
+        email.sent_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        email.save()
+
         if email.mailbox.is_active:
             send_mail_task.delay(email.id)
             return Response(status=status.HTTP_200_OK)
-        print('Skrzynka nie aktywna')
-
-    # def send_message(self, email_id):
-    #     email = self.queryset.get(id=email_id)
-    #     if email.mailbox.is_active:
-    #         return send_mail_task.delay(email_id)
-    #     print('Skrzynka nie aktywna')
-
-    # filter_backends = [filters.DjangoFilterBackend]
-    # filterset_fields = ('date', 'sent_date')
+        print('Mailbox is inactive')

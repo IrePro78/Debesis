@@ -115,7 +115,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-MEDIA_ROOT = BASE_DIR / ''
+MEDIA_ROOT = BASE_DIR / 'attachments/'
 MEDIA_URL = '/attachments/'
 
 

@@ -45,9 +45,6 @@ class Template(models.Model):
     class Meta:
         ordering = ('subject',)
 
-    def get_absolute_url(self):
-        return f'/{self.attachment.url}'
-
     def __str__(self):
         return self.subject
 

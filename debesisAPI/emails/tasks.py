@@ -1,7 +1,9 @@
 from celery import shared_task
 from django.core.mail import EmailMessage, get_connection
-
+from django.conf import settings
 from .models import Email
+
+path_to_file = settings.MEDIA_URL
 
 
 @shared_task(bind=True,
@@ -34,5 +36,5 @@ def send_mail_task(self, email_id):
     }
 
     message = EmailMessage(*tuple(email_msg.values()))
-    message.attach_file(f'./{email.template.attachment}')
+    message.attach_file(f'.{path_to_file}{email.template.attachment}')
     return message.send(fail_silently=False)

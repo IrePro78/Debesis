@@ -103,11 +103,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'CET'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 MEDIA_ROOT = BASE_DIR / 'attachments/'
 MEDIA_URL = '/attachments/'
@@ -134,13 +134,13 @@ LOGGING = {
     "disable_existing_loggers": False,
     "filters": {
         "require_debug_false": {
-            '()':'django.utils.log.RequireDebugFalse'
+            '()': 'django.utils.log.RequireDebugFalse'
         }
     },
     'formatters': {
-        'standards': {
-            'format': '%(levelname)s %(message)s',
-            'datefmt': '%y %b %d, %H:%M:%S',
+        'standard': {
+            'format': '%(asctime)s %(levelname)s [%(lineno)s] -- %(message)s',
+            'datefmt': '%d %m %Y, %H:%M:%S',
         },
     },
     'handlers': {
@@ -148,8 +148,8 @@ LOGGING = {
             'level': 'INFO',
             'filters': None,
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/logs/email.log',
-            'maxBytes': 1024*1024*5,
+            'filename': 'logs/logfile.log',
+            'maxBytes': 1024 * 1024 * 5,
             'backupCount': 3,
             'formatter': 'standard'
         },
@@ -157,42 +157,48 @@ LOGGING = {
             'level': 'DEBUG',
             'filters': None,
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/logs/debug_log.log',
-            'formatter': 'standard',
+            'filename': 'logs/debug_log.log',
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5,
-    },
-        'default_logger': {
-                'level': 'WARNING',
-                'filters': None,
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': '/logs/default.log',
-                'maxBytes': 1024*1024*5,
-                'backupCount': 2,
-                'formatter': 'standard'
+            'formatter': 'standard'
         },
-        'celery_log': {
-                'level': 'DEBUG',
-                'filters': None,
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': '/logs/default.log',
-                'maxBytes': 1024*1024*5,
-                'backupCount': 2,
-                'formatter': 'standard'
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+
+        'default_logger': {
+            'level': 'WARNING',
+            'filters': None,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/default.log',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 2,
+            'formatter': 'standard'
+        },
+        'celery_logger': {
+            'level': 'INFO',
+            'filters': None,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/celery.log',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 2,
+            'formatter': 'standard'
         },
         'celery_task_logger': {
-                'level': 'DEBUG',
-                'filters': None,
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': '/logs/celery_tasks.log',
-                'maxBytes': 1024*1024*5,
-                'backupCount': 2,
-                'formatter': 'standard'
+            'level': 'WARNING',
+            'filters': None,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/celery_tasks.log',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 2,
+            'formatter': 'standard'
         },
     },
     'loggers': {
         '': {
-            'handlers': ['default_logger'],
+            'handlers': ['default_logger', 'console'],
             'level': 'WARNING',
             'propagate': True,
         },
@@ -224,9 +230,12 @@ LOGGING = {
             'propagate': True,
         },
         'celery': {
-            'handlers': ['cellery_logger'],
+            'handlers': ['celery_logger'],
             'level': 'DEBUG',
             'propagate': True,
         },
     }
 }
+
+from logging.config import dictConfig
+dictConfig(LOGGING)

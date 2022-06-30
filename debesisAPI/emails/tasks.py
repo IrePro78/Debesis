@@ -2,6 +2,7 @@ from celery import shared_task
 from django.core.mail import EmailMessage, get_connection
 from django.conf import settings
 from .models import Email
+from celery.utils.log import get_task_logger
 
 path_to_file = settings.MEDIA_URL
 
@@ -34,7 +35,7 @@ def send_mail_task(self, email_id):
         'cc': email.cc,
         'reply_to': email.reply_to,
     }
-
+    logger = get_task_logger(__name__)
     message = EmailMessage(*tuple(email_msg.values()))
     message.attach_file(f'.{path_to_file}{email.template.attachment}')
     return message.send(fail_silently=False)

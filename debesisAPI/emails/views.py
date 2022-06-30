@@ -54,4 +54,4 @@ class EmailsViewSet(viewsets.ModelViewSet):
         if email.mailbox.is_active:
             send_mail_task.delay(email.id)
             return Response(status=status.HTTP_200_OK)
-        print('Mailbox is inactive')
+        return Response('Mailbox is inactive', status=status.HTTP_401_UNAUTHORIZED)
